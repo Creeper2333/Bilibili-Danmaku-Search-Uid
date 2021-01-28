@@ -154,7 +154,7 @@ def loginQr():
     root=Tk()
     root.resizable(width='false', height='false')
     root.title='QrCode'
-    label=Label(root,text='使用b站客户端扫码-by Creeper2333\n盗源码的死个马，骨灰飞扬千万家')
+    label=Label(root,text='使用b站客户端扫码-by Creeper2333\n盗视频的死个马，骨灰飞扬千万家')
     label.grid(row=0,column=0)
     img=Image.open('qrcode.png')
     photo=ImageTk.PhotoImage(img)
@@ -222,6 +222,25 @@ def XmlToJson(dm_xml):
     except:
         print('Xml to json convert failed')
 
+def reportdm(key,csrf,dmid,cid):
+    headers = {
+    'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36',
+    'Host':'api.bilibili.com',
+    'content-type':'application/x-www-form-urlencoded'
+    }
+    c = {
+    'csrf':csrf,
+    'SESSDATA':key
+    }
+    postData={
+    'csrf':csrf,
+    'cid':cid,
+    'dmid':dmid,
+    'reason':'9'
+    }
+    rslt=requests.post('http://api.bilibili.com/x/dm/report/add',
+                           cookies=c,headers=headers,data=postData,timeout=10)
+    print(rslt.text)
 if __name__ == '__main__':
     if(input('选择登录方式：1是二维码，其它是手动输入SESSDATA和bili_jct。')=='1'):
         json_=loginQr()
@@ -292,4 +311,7 @@ if __name__ == '__main__':
     f.save('danmaku.xls')
     #jsonRslt=XmlToJson(xmlRslt)
     #print(jsonRslt)
+    for l in forbidden_dm_id:
+        reportdm(SESSDATA,bili_jct,l,cid)
+        time.sleep(1)
     input('完成，内容已输出至 danmaku.xls。')
